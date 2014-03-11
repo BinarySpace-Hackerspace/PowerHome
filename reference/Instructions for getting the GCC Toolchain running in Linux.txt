@@ -1,0 +1,62 @@
+GCC toolchain
+
+
+tar xjvf gcc-arm-none-eabi-4_7-2013q1-20130313-linux.tar.bz2
+sudo mv gcc-arm-none-eabi-4_7-2013q1-20130313-linux /opt/ARM
+echo "PATH=$PATH:/opt/ARM/bin" >> ~/.bashrc
+source ~/.bashrc
+arm-none-eabi-gcc --version
+
+
+build stlink
+
+sudo apt-get install autoconf libusb-1.0-0-dev
+
+git clone git://github.com/texane/stlink.git
+cd stlink
+./autogen.sh
+./configure
+make
+
+install stlink
+
+sudo mkdir /opt/stlink
+cd /opt/stlink
+sudo cp ~/src/stlink/st-flash .
+sudo cp ~/src/stlink/st-util .
+echo "PATH=$PATH:/opt/stlink" >> ~/.bashrc
+source ~/.bashrc
+
+grant access
+
+sudo cp ~/src/stlink/49-stlinkv2.rules /etc/udev/rules.d
+sudo udevadm control --reload-rules
+
+build openocd
+
+sudo apt-get install libtool texinfo
+
+git clone git://git.code.sf.net/p/openocd/code openocd
+
+
+./bootstrap
+./configure --prefix=/usr --enable-maintainer-mode --enable-stlink
+make 
+sudo make install
+
+
+template
+
+git clone https://github.com/szczys/stm32f0-discovery-basic-template
+
+make
+
+make program
+
+-- useful links
+
+http://hertaville.com/2012/07/28/stm32f0-gpio-tutorial-part-1/
+https://my.st.com/public/STe2ecommunities/mcu/Lists/STM32Discovery/Flat.aspx?RootFolder=%2Fpublic%2FSTe2ecommunities%2Fmcu%2FLists%2FSTM32Discovery%2FUART%20example%20code%20for%20STM32F0&FolderCTID=0x01200200770978C69A1141439FE559EB459D75800084C20D8867EAD444A5987D47BE638E0F&currentviews=7894
+
+http://www.fmf.uni-lj.si/~ponikvar/STM32f407.htm
+
