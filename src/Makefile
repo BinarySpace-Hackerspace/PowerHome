@@ -1,0 +1,23 @@
+PROJECT=powerhome
+FILES=main
+SPLDIR?=../STM32L1xx_StdPeriph_Lib
+
+COMPILER=arm-none-eabi
+INCLUDES=-I$(SRCDIR)/Libraries/CMSIS/Include/ -I$(SPLDIR)/Libraries/STM32L1xx_StdPeriph_Driver/inc -I$(SPLDIR)/Libraries/CMSIS/Device/ST/STM32L1xx/Include/ -I$(SPLDIR)/Libraries/CMSIS/Include
+CC=$(COMPILER)-gcc
+LD=$(COMPILER)-ld
+CFLAGS=-I. -fno-common -O0 -g -mcpu=cortex-m0 -mthumb $(INCLUDES)
+LDFLAGS=-v -Tstm32.ld -nostartfiles
+
+export SPLDIR CC CFLAGS
+
+$(PROJECT).bin: $(PROJECT).elf
+	$(COMPILER)-objcopy -Obinary $< $@	
+
+$(PROJECT).elf: $(foreach f,$(FILES),$(f).o) 
+	$(LD) $(LDFLAGS) $< $(LOADLIBES) $(LDLIBS) -o $@
+
+clean:
+	-rm *.elf *.o *.bin 
+
+.PHONY: clean
