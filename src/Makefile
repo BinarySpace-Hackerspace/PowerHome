@@ -7,9 +7,13 @@ INCLUDES=-I$(SRCDIR)/Libraries/CMSIS/Include/ -I$(SPLDIR)/Libraries/STM32L1xx_St
 CC=$(COMPILER)-gcc
 LD=$(COMPILER)-ld
 CFLAGS=-I. -fno-common -O0 -g -mcpu=cortex-m0 -mthumb $(INCLUDES)
-LDFLAGS=-v -Tstm32.ld -nostartfiles
+LDFLAGS=-v -L$(SPLDIR)/Libraries -Tstm32.ld -nostartfiles -lstm32l1
 
 export SPLDIR CC CFLAGS
+
+all: lib proj
+
+proj: 	$(PROJECT).elf
 
 $(PROJECT).bin: $(PROJECT).elf
 	$(COMPILER)-objcopy -Obinary $< $@	
@@ -17,7 +21,10 @@ $(PROJECT).bin: $(PROJECT).elf
 $(PROJECT).elf: $(foreach f,$(FILES),$(f).o) 
 	$(LD) $(LDFLAGS) $< $(LOADLIBES) $(LDLIBS) -o $@
 
+lib:
+	$(MAKE) -C $(SPLDIR)/Libraries
+
 clean:
-	-rm *.elf *.o *.bin 
+	-rm *.elf *.o *.bin $(SPLDIR)/Libraries/*.o $(SPLDIR)/Libraries/*.a
 
 .PHONY: clean
