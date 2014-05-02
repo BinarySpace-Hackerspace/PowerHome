@@ -1,44 +1,29 @@
-#include <stdint.h>
-#include <stm32l1xx.h>
+#include "stm32l1xx_conf.h"
 
-#define STACK_TOP 0x20000800   
-
-static void nmi_handler(void);
-static void hardfault_handler(void);
 int main(void);
-
-// Define the vector table
-unsigned int *myvectors[4]
-__attribute__ ((section("vectors"))) = {
-    (unsigned int *) STACK_TOP,         // stack pointer
-    (unsigned int *) main,              // code entry point
-    (unsigned int *) nmi_handler,       // NMI handler (not really)
-    (unsigned int *) hardfault_handler  // hard fault handler
-};
-
+void delay(int a);
 
 int main(void)
 {
-  RCC->AHBENR |=  (1UL <<  1);              /* Enable GPIOB clock         */
-  GPIOB->MODER   |=   (0x00005000);             /* General purpose output mode*/
-  GPIOB->OSPEEDR |=   (0x00005000);             /* 2 MHz Low speed            */
+	RCC->AHBENR |=  (1UL <<  1);   
+  	GPIOB->MODER   |=   (0x00005000);
 
-  GPIOB->BSRRL = 1L << 6; 
 
-    int i=0;
+	while (1)
+	{
+		// port output
+		GPIOB->ODR ^= ( 1 << 7 );
+		delay(50000);
+	}
 
-    for(;;)
-    {
-        i++;
-    }
 }
 
-void nmi_handler(void)
+void delay( int a )
 {
-    for(;;);
-}
+	volatile int i, j;
 
-void hardfault_handler(void)
-{
-    for(;;);
+	for ( i = 0; i < a; i++ )
+	{
+		j++;
+	}
 }
